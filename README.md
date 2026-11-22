@@ -35,8 +35,13 @@ g++ -std=c++23 ./src/*.cpp -o ./build/can_bus
   czy linia jest zajęta, aby lepiej oddać idee protokołu CAN.
 * `CanBus` przechowuje informację o aktualnym stanie napięć na linii, ułatwia
   urzytkownikom logikę wired-AND metodą `CanBus::drive_dominant`.
+* `CanFrame` przechowuje tablicę bitów z których składa się ramka.
 
 ## Dla ambitnych
 * Sprawdzenie czy identyfikatory są optymalne \
   W podanej tabelce `ID CAN` nie były optymalne, ponieważ np. w module `Silnik`
-  ciśnienie o niższym terminie dostarczenia ma wyższe ID
+  ciśnienie o niższym terminie dostarczenia niż temperatura ma wyższe ID.
+  Można to naprawić stosując inną strategię kolejkowania np. `DeadlinePriority` w module.
+  Wiadomość `Pozycja GPS` w module `Nawigajca` ma wyższe ID niż `Napięcie akumulatora` w module 
+  `Zasilanie`, mimo że ma ona termin dostarczenia w przeciwieństwie do drugiej wiadomości.
+ 
