@@ -6,6 +6,9 @@ modułów oraz przypisywanie im wiadomości z określoną częstotliwością
 oraz terminem dostarczenia.
 
 ## Budowanie
+Wymagania kompilator C++ wspierający standard C++23 (np. `gcc 14`)
+Opcjonalnie `CMake`, interpreter `Python'a` oraz `Matplotlib` do generowania wykresów
+
 ```bash
 cmake -B build
 cmake --build ./build/
@@ -15,6 +18,11 @@ Bez programu `cmake` można też
 ```bash
 mkdir build
 g++ -std=c++23 ./src/*.cpp -o ./build/can_bus
+```
+
+Generowanie wykresu
+```bash
+python3 plot.py
 ```
 
 ## Funkcjonalności
@@ -38,10 +46,14 @@ g++ -std=c++23 ./src/*.cpp -o ./build/can_bus
 * `CanFrame` przechowuje tablicę bitów z których składa się ramka.
 
 ## Dla ambitnych
-* Sprawdzenie czy identyfikatory są optymalne \
+* **Sprawdzenie czy identyfikatory są optymalne** \
   W podanej tabelce `ID CAN` nie były optymalne, ponieważ np. w module `Silnik`
   ciśnienie o niższym terminie dostarczenia niż temperatura ma wyższe ID.
   Można to naprawić stosując inną strategię kolejkowania np. `DeadlinePriority` w module.
   Wiadomość `Pozycja GPS` w module `Nawigajca` ma wyższe ID niż `Napięcie akumulatora` w module 
   `Zasilanie`, mimo że ma ona termin dostarczenia w przeciwieństwie do drugiej wiadomości.
- 
+* **Wizualizacja obciążenia magistrali w czasie** \ 
+  klasa `CanNetwork` zbiera informacje o obiciążeniu
+  magistrali w odstepie czasowym ustawianym w przekazywanym w konstruktorze,
+  Dane są zapisywane do pliku `bus_load.csv` jest również generowany wykres
+  skryptem w Python'ie `plot.py` o nazwie `bus_load.png`
