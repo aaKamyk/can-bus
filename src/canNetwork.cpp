@@ -1,5 +1,6 @@
 #include "canNetwork.hpp"
 
+#include <algorithm>
 #include <stdexcept>
 
 using namespace std::chrono_literals;
@@ -10,6 +11,8 @@ void CanNetwork::tick() {
     for (auto& node : this->nodes) { node.tick(this->t); }
     for (auto& node : this->nodes) { node.drive(); }
     for (auto& node : this->nodes) { node.sample(this->t); }
+
+    this->collect_bus_load_statistics();
 
     this->t += BIT_TIME;
 }
@@ -26,6 +29,9 @@ void CanNetwork::reset() {
     for (auto& node : this->nodes) { node.reset(); }
     this->m_bus.release();
     this->t = 0us;
+
+    this->bus_transmission_bits_in_window = 0;
+    this->bus_load.clear();
 }
 
 void CanNetwork::add_node(CanNode n) {
@@ -65,4 +71,27 @@ std::map<std::uint16_t, CanMessageStatistics> CanNetwork::collect_statistics() c
     }
 
     return statistics;
+}
+
+void CanNetwork::collect_bus_load_statistics() {
+    const bool is_any_transmitting = std::ranges::any_of(
+        this->nodes,
+        [](const CanNode& node) -> bool { return node.get_state() == CanNodeState::Transmitting; }
+    );
+
+    if (is_any_transmitting) {
+        this->bus_transmission_bits_in_window++;
+    }
+
+    if (this->t > 0us && this->t % this->bus_load_sample_period == 0us) {
+        const auto total_bits_in_window = this->bus_load_sample_period / BIT_TIME;
+        const double load =
+            static_cast<double>(this->bus_transmission_bits_in_window) /
+            static_cast<double>(total_bits_in_window) * 100;
+        this->bus_load.emplace_back(CanBustNodeSample{
+            .timestamp = this->t,
+            .load_percent = load,
+        });
+        this->bus_transmission_bits_in_window = 0;
+    }
 }

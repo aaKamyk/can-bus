@@ -1,4 +1,5 @@
 #include <format>
+#include <fstream>
 #include <iostream>
 
 #include "canNetwork.hpp"
@@ -6,7 +7,7 @@
 using namespace std::chrono_literals;
 
 int main() {
-    CanNetwork network{};
+    CanNetwork network{10ms};
 
     CanNode engine{"silnik", network.bus()};
     engine.add_message("temperatura", { .id = 0x010, .data_bytes = 4, .period = 10ms, .deadline = 50ms});
@@ -41,5 +42,13 @@ int main() {
             "Max latency: {}\n",
             id, stat.delivered, stat.missed_deadlines, stat.average_latency(), stat.max_latency
         );
+    }
+
+
+    std::ofstream bus_load_statistics_file{"bus_load.csv"};
+    bus_load_statistics_file << "time_us;bus_load_percent\n";
+    for (const auto [timestamp, load_percent] : network.bus_load_statistics()) {
+        bus_load_statistics_file <<
+            std::format("{};{:.2f}\n", timestamp.count(), load_percent);
     }
 }

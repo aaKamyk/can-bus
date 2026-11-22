@@ -36,9 +36,10 @@ public:
     void reset();
     void add_message(CanMessageName msg_name, CanMessageConfig config);
 
-    [[nodiscard]] const auto& get_name() const { return this->name; }
-    [[nodiscard]] const auto& get_messages() const { return this->messages; }
-    [[nodiscard]] const auto& get_diagnostics() const { return this->diagnostics; }
+    [[nodiscard]] CanNodeState get_state() const { return this->state; }
+    [[nodiscard]] const auto&  get_name() const { return this->name; }
+    [[nodiscard]] const auto&  get_messages() const { return this->messages; }
+    [[nodiscard]] const auto&  get_diagnostics() const { return this->diagnostics; }
 
 private:
     static constexpr std::int32_t BUS_IDLE_BITS = 11;
