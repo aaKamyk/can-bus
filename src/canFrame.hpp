@@ -5,8 +5,6 @@
 #include <span>
 #include <vector>
 
-#include "time.hpp"
-
 inline constexpr std::uint8_t MAX_DLC = 8;
 
 enum class Bit : bool {
