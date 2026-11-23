@@ -27,6 +27,7 @@ public:
     [[nodiscard]] CanBus& bus() { return this->m_bus; }
     [[nodiscard]] std::map<std::uint16_t, CanMessageStatistics> collect_statistics() const;
     [[nodiscard]] const std::vector<CanBustNodeSample>& bus_load_statistics() const { return this->bus_load; }
+    [[nodiscard]] const auto& get_message_registry() const { return this->message_registry; }
 
     static constexpr auto BIT_TIME = Tick{2}; /// How long each bit takes to transmit at 500 Kbits / s
 

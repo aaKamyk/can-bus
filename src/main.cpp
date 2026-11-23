@@ -34,13 +34,16 @@ int main() {
 
     for (auto stats = network.collect_statistics();
         const auto& [id, stat] : stats) {
+        const auto& metadata = network.get_message_registry().at(id);
         std::cout << std::format(
             "Id: {:#06x}\n"
+            "Message full name: {}::{}\n"
             "Delivered count: {}\n"
             "Missed deadlines: {}\n"
             "Average latency: {}\n"
             "Max latency: {}\n",
-            id, stat.delivered, stat.missed_deadlines, stat.average_latency(), stat.max_latency
+            id, metadata.module_name, metadata.message_name,
+            stat.delivered, stat.missed_deadlines, std::chrono::microseconds{static_cast<std::int64_t>(stat.average_latency())}, stat.max_latency
         );
     }
 
