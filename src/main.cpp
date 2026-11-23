@@ -12,14 +12,17 @@ int main() {
     CanNetwork network{BUS_LOAD_SAMPLE_PERIOD};
 
     CanNode engine{"silnik", network.bus()};
-    engine.add_message("temperatura", { .id = 0x010, .data_bytes = 4, .period = 10ms, .deadline = 50ms});
-    engine.add_message("ciśnienie", { .id = 0x020, .data_bytes = 4, .period = 20ms, .deadline = 10ms });
+    engine.add_message("ciśnienie", { .id = 0x010, .data_bytes = 4, .period = 20ms, .deadline = 10ms });
+    engine.add_message("pozycja zaworu", { .id = 0x015, .data_bytes = 2, .period = 5ms, .deadline = 8ms });
+    engine.add_message("temperatura", { .id = 0x020, .data_bytes = 4, .period = 10ms, .deadline = 50ms});
 
     CanNode power{"zasilanie", network.bus()};
     power.add_message("napięcie akumulatora", { .id = 0x100, .data_bytes = 2, .period = 100ms });
+    power.add_message("pobór prądu", { .id = 0x150, .data_bytes = 4, .period = 50ms, .deadline = 50ms });
 
     CanNode nav{"nawigacja", network.bus()};
     nav.add_message("pozycja GPS", { .id = 0x200, .data_bytes = 8, .period = 200ms, .deadline = 100ms });
+    nav.add_message("dane IMU", { .id = 0x040, .data_bytes = 6, .period = 4ms, .deadline = 5ms });
 
     CanNode diag{"diagnostyka", network.bus()};
     diag.add_message("status systemu", { .id = 0x300, .data_bytes = 4, .period = 500ms });
