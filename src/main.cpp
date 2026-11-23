@@ -6,8 +6,10 @@
 
 using namespace std::chrono_literals;
 
+static constexpr Tick BUS_LOAD_SAMPLE_PERIOD = 10ms;
+
 int main() {
-    CanNetwork network{10ms};
+    CanNetwork network{BUS_LOAD_SAMPLE_PERIOD};
 
     CanNode engine{"silnik", network.bus()};
     engine.add_message("temperatura", { .id = 0x010, .data_bytes = 4, .period = 10ms, .deadline = 50ms});
